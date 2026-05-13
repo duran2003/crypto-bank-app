@@ -1,1 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crypto Investment Bank</title>
+  <style>
+    * { box-sizing: border-box; }
 
+    body {
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0ea5e9, #2563eb);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 60px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 36px;
+      margin-bottom: 10px;
+      color: #1f2937;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .center { text-align: center; }
+
+    button {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 700;
+      margin: 8px;
+      transition: 0.2s;
+      letter-spacing: 0.2px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+
+    button:hover {
+      background: #1d4ed8;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37,99,235,0.4);
+    }
+
+    .card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 15px;
+      padding: 22px;
+      margin-top: 20px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      color: #1e3a8a;
+    }
+
+    .wallet-box {
+      word-break: break-all;
+      background: #e0f2fe;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-family: monospace;
+    }
+
+    .balance {
+      font-size: 32px;
+      font-weight: bold;
+      color: #2563eb;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      text-align: left;
+      color: #374151;
+    }
+
+    .note {
+      margin-top: 20px;
+      text-align: center;
+      color: #6b7280;
+    }
+  
+
+    /* Dark mode styles */
+    .dark body, body.dark {
+      background: linear-gradient(135deg, #0f172a, #020617);
+    }
+
+    body.dark .container {
+      background: #111827;
+      color: #e5e7eb;
+    }
+
+    body.dark h1, body.dark h2 {
+      color: #e5e7eb;
+    }
+
+    body.dark .subtitle {
+      color: #9ca3af;
+    }
+
+    body.dark .card {
+      background: #1f2937;
+    }
+
+    body.dark button {
+      background: #3b82f6;
+    }
+
+    body.dark .wallet-box {
+      background: #1e3a8a;
+      color: #e5e7eb;
+    }
+
+    body.dark input {
+      background: #111827;
+      color: #e5e7eb;
+      border-color: #374151;
+    }
+
+    body.dark input::placeholder {
+      color: #9ca3af;
+    }
+
+    body.dark .balance {
+      color: #60a5fa;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Crypto Investment Bank</h1>
+    <p class="subtitle">
+      A full-stack Web3 banking demo using MetaMask, Node.js, Sequelize, and MySQL.
+    </p>
+
+    <div class="card">
+      <h2>Account Access</h2>
+      <p>Create an account or login before viewing saved investments.</p>
+      <input id="username" type="text" placeholder="User ID" />
+      <input id="password" type="password" placeholder="Password" />
+      <button onclick="loginUser()">Login</button>
+      <button onclick="registerUser()">Register</button>
+      <button onclick="logoutUser()">Logout</button>
+      <p id="loginStatus">No user logged in.</p>
+    </div>
+
+    <div class="center">
+      <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+      <button onclick="connectWallet()">Connect Wallet</button>
+      <button onclick="displayInvestments()">Display Investments</button>
+      <button onclick="fakeDeposit()">Demo Deposit</button>
+      <button onclick="fakeWithdraw()">Demo Withdraw</button>
+    </div>
+
+    <div class="card">
+      <h2>Web3 Wallet Connection</h2>
+      <p id="status">Wallet not connected.</p>
+      <div class="wallet-box" id="walletAddress">No wallet address yet.</div>
+    </div>
+
+    <div class="card">
+      <h2>Demo Wallet Balance</h2>
+      <p class="balance" id="balance">0.00 ETH</p>
+      <p>This balance is simulated to demonstrate deposit and withdrawal behavior.</p>
+    </div>
+
+    <div class="card">
+      <h2>Saved Investment Balances</h2>
+      <p>These balances are loaded from the MySQL database through the Express backend.</p>
+      <div class="wallet-box" id="investmentDisplay">No investments loaded yet.</div>
+    </div>
+
+    <div class="card">
+      <h2>Demo Transaction History</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="transactions">
+          <tr>
+            <td colspan="3">No transactions yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="note">
+      This project demonstrates a full-stack crypto banking system with database login, saved investment balances, and Web3 wallet connection.
+    </p>
+  </div>
+
+  <script>
+    let balance = 0;
+    let transactionStarted = false;
+    let currentUser = "";
+
+    async function registerUser() {
+
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      if (username.trim() === "" || password.trim() === "") {
+        alert("Please enter username and password");
+        return;
+      }
+
+      try {
+
+        const response = await fetch("/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            userid: username,
+            password: password,
+            username: username,
+            email: username + "@email.com",
+            zipcode: "21044"
+          })
+        });
+
+        const data = await response.json();
+
+        alert(data.message);
+
+      } catch (err) {
+
+        console.error(err);
+        alert("Error registering user");
+
+      }
+
+    }
+
+    async function loginUser() {
+
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      if (username.trim() === "" || password.trim() === "") {
+        document.getElementById("loginStatus").innerText =
+          "Please enter a username and password.";
+        return;
+      }
+
+      const response = await fetch("/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          userid: username,
+          password: password
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        currentUser = data.user.userid;
+
+        document.getElementById("loginStatus").innerText =
+          "Login successful. Logged in as: " + currentUser;
+      } else {
+        document.getElementById("loginStatus").innerText = data.message;
+      }
+
+    }
+
+    function logoutUser() {
+
+      currentUser = "";
+      balance = 0;
+      transactionStarted = false;
+
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("loginStatus").innerText = "No user logged in.";
+      document.getElementById("status").innerText = "Wallet not connected.";
+      document.getElementById("walletAddress").innerText = "No wallet address yet.";
+      document.getElementById("balance").innerText = "0.00 ETH";
+      document.getElementById("investmentDisplay").innerText = "No investments loaded yet.";
+      document.getElementById("transactions").innerHTML = `
+          <tr>
+            <td colspan="3">No transactions yet.</td>
+          </tr>
+        `;
+
+    }
+
+    async function connectWallet() {
+
+      if (window.ethereum) {
+
+        try {
+
+          const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts"
+          });
+
+          document.getElementById("status").innerText =
+            "Wallet connected successfully.";
+
+          document.getElementById("walletAddress").innerText =
+            accounts[0];
+
+        } catch (error) {
+
+          document.getElementById("status").innerText =
+            "Wallet connection was rejected.";
+
+        }
+
+      } else {
+
+        document.getElementById("status").innerText =
+          "MetaMask is not installed. Please install MetaMask to use this demo.";
+
+      }
+
+    }
+
+    async function displayInvestments() {
+
+      if (currentUser === "") {
+        alert("Please login first before displaying investments.");
+        return;
+      }
+
+      try {
+        const response = await fetch("/investments/" + currentUser);
+        const data = await response.json();
+
+        if (response.ok) {
+          document.getElementById("investmentDisplay").innerHTML = `
+            <strong>User ID:</strong> ${data.userid}<br>
+            <strong>Bitcoin:</strong> ${data.bitcoin} BTC<br>
+            <strong>Ethereum:</strong> ${data.ethereum} ETH<br>
+            <strong>Solana:</strong> ${data.solana} SOL<br>
+            <strong>Dogecoin:</strong> ${data.dogecoin} DOGE
+          `;
+        } else {
+          document.getElementById("investmentDisplay").innerText = data.message;
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error loading investments");
+      }
+
+    }
+
+    function fakeDeposit() {
+
+      balance += 0.25;
+
+      updateBalance();
+
+      addTransaction("Deposit", "0.25 ETH", "Completed");
+
+    }
+
+    function fakeWithdraw() {
+
+      if (balance >= 0.10) {
+
+        balance -= 0.10;
+
+        updateBalance();
+
+        addTransaction("Withdraw", "0.10 ETH", "Completed");
+
+      } else {
+
+        addTransaction(
+          "Withdraw",
+          "0.10 ETH",
+          "Failed - Not enough funds"
+        );
+
+      }
+
+    }
+
+    function updateBalance() {
+
+      document.getElementById("balance").innerText =
+        balance.toFixed(2) + " ETH";
+
+    }
+
+    function addTransaction(type, amount, status) {
+
+      const transactions =
+        document.getElementById("transactions");
+
+      if (!transactionStarted) {
+
+        transactions.innerHTML = "";
+
+        transactionStarted = true;
+
+      }
+
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${type}</td>
+        <td>${amount}</td>
+        <td>${status}</td>
+      `;
+
+      transactions.prepend(row);
+
+    }
+
+    function toggleDarkMode() {
+
+      document.body.classList.toggle("dark");
+
+    }
+
+</script>
+</body>
+</html>
