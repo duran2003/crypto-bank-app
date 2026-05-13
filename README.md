@@ -38,7 +38,7 @@ The application allows users to:
 ### 1. Clone the repository
 
 ```bash
-git clone YOUR_GITHUB_LINK_HERE
+git clone https://github.com/duran2003/crypto-bank-app.git)
 
 2. Open the project folder
 cd crypto-bank-app
